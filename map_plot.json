@@ -1,0 +1,39 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Sum of Annual Deaths by State in Malaysia",
+  "width": 400,
+  "height": 300,
+  "projection": {"type": "equalEarth"},
+  "data": {
+    "url": "ne_10m_admin_1_states_provinces.json",  
+    "format": {"type": "topojson", "feature": "features"}
+  },
+  "transform": [
+    {
+      "lookup": "properties.name", 
+      "from": {
+        "data": {
+          "url": "both_overall.csv",  
+          "format": {"type": "csv"}
+        },
+        "key": "state",  
+        "fields": ["annual_death"]
+      }
+    },
+    {
+      "aggregate": [{ "op": "sum", "field": "annual_death", "as": "total_deaths" }],  
+      "groupby": ["properties.name"] } 
+  ],
+  "mark": {"type": "geoshape"},
+  "encoding": {
+    "color": {
+      "field": "annual_death",
+      "type": "quantitative",
+      "scale": {"type": "log"}
+    },
+    "tooltip": [
+      {"field": "properties.name", "type": "nominal", "title": "State"}, 
+      {"field": "total_deaths", "type": "quantitative", "title": "Total Deaths"}
+    ]
+  }
+}
