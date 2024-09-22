@@ -25,7 +25,7 @@
       "as": "births_per_1000"
     }
   ],
-  "mark": {"type": "geoshape"},
+  "mark": {"type": "geoshape","stroke": "black"},
   "encoding": {
     "color": {
       "field": "births_per_1000",
