@@ -1,39 +1,48 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "title": "Sum of Annual Deaths by State in Malaysia",
-  "width": 400,
+  "title": "Births per 1,000 Population by State in 2022",
+  "width": 500,
   "height": 300,
   "projection": {"type": "equalEarth"},
   "data": {
-    "url": "ne_10m_admin_1_states_provinces.json",  
-    "format": {"type": "topojson", "feature": "features"}
+    "url": "https://raw.githubusercontent.com/ChaiJuanYang/FIT3179_W9/refs/heads/main/ne_10m_admin_1_states_provinces.json",  
+    "format": {"type": "topojson", "feature": "ne_10m_admin_1_states_provinces"}
   },
   "transform": [
     {
       "lookup": "properties.name", 
       "from": {
         "data": {
-          "url": "both_overall.csv",  
+          "url": "https://raw.githubusercontent.com/ChaiJuanYang/FIT3179_W9/refs/heads/main/df_2022.csv",  
           "format": {"type": "csv"}
         },
         "key": "state",  
-        "fields": ["annual_death"]
+        "fields": ["annual_birth", "population"]
       }
     },
     {
-      "aggregate": [{ "op": "sum", "field": "annual_death", "as": "total_deaths" }],  
-      "groupby": ["properties.name"] } 
+      "calculate": "datum.annual_birth / datum.population * 1000", 
+      "as": "births_per_1000"
+    }
   ],
   "mark": {"type": "geoshape"},
   "encoding": {
     "color": {
-      "field": "annual_death",
+      "field": "births_per_1000",
       "type": "quantitative",
-      "scale": {"type": "log"}
+      "scale": {"scheme": "greens"},
+      "legend": {
+        "title": "Births per 1,000 Population",  
+        "labelFontSize": 12,                   
+        "titleFontSize": 10,                   
+        "titleFontWeight": "bold"              
+      }
     },
     "tooltip": [
       {"field": "properties.name", "type": "nominal", "title": "State"}, 
-      {"field": "total_deaths", "type": "quantitative", "title": "Total Deaths"}
+      {"field": "births_per_1000", "type": "quantitative", "title": "Births per 1,000 Population"},
+      {"field": "annual_birth", "type": "quantitative", "title": "Total Births"},
+      {"field": "population", "type": "quantitative", "title": "Population"}
     ]
   }
 }
